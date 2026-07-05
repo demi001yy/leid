@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>建筑特征雷达图 · 暗黑科研风</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #164068;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .card {
+            background: #164068;
+            max-width: 720px;
+            width: 100%;
+            border-radius: 2rem;
+            padding: 1.6rem 1.8rem 1.8rem 1.8rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.2s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+            margin-bottom: 0.2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.5rem;
+        }
+
+        .title h2 {
+            font-weight: 300;
+            font-size: 1.5rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .title .sub {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .legend-tag {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            font-size: 0.72rem;
+            font-weight: 300;
+        }
+
+        .legend-tag span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .legend-tag .dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .dot-orange {
+            background: #d97c3a;
+        }
+
+        .dot-blue {
+            background: #4a8fc5;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 460px;
+            margin: 0.4rem auto 0.2rem auto;
+            aspect-ratio: 1/1;
+        }
+
+        #radarChart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        @media (max-width: 520px) {
+            .card {
+                padding: 1.2rem 0.8rem;
+            }
+
+            .title h2 {
+                font-size: 1.2rem;
+            }
+
+            .chart-container {
+                max-width: 340px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="header">
+            <div class="title">
+                <h2>建筑特征雷达</h2>
+                <span class="sub">橙色 · 盆地边缘强风石砌民居 &nbsp;|&nbsp; 蓝色 · 盆底静风天井合院</span>
+            </div>
+            <div class="legend-tag">
+                <span><span class="dot dot-orange"></span>盆地边缘强风石砌民居</span>
+                <span><span class="dot dot-blue"></span>盆底静风天井合院</span>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="radarChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const labels = ['建筑高度', '墙体厚度', '开窗面积', '围合度', '抗风设计'];
+
+            // 橙色·盆地边缘强风石砌民居
+            const orangeData = [2, 9, 2, 3, 9];
+            // 蓝色·盆底静风天井合院
+            const blueData = [8, 3, 8, 9, 2];
+
+            const ctx = document.getElementById('radarChart').getContext('2d');
+
+            const chart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '盆地边缘强风石砌民居',
+                        data: orangeData,
+                        borderColor: '#d97c3a',
+                        backgroundColor: 'rgba(217, 124, 58, 0.12)',
+                        pointBackgroundColor: '#d97c3a',
+                        pointBorderColor: 'rgba(255,255,255,0.2)',
+                        pointBorderWidth: 1,
+                        pointRadius: 4,
+                        pointHoverRadius: 7,
+                        borderWidth: 1.8,
+                        tension: 0.1,
+                    }, {
+                        label: '盆底静风天井合院',
+                        data: blueData,
+                        borderColor: '#4a8fc5',
+                        backgroundColor: 'rgba(74, 143, 197, 0.10)',
+                        pointBackgroundColor: '#4a8fc5',
+                        pointBorderColor: 'rgba(255,255,255,0.2)',
+                        pointBorderWidth: 1,
+                        pointRadius: 4,
+                        pointHoverRadius: 7,
+                        borderWidth: 1.8,
+                        tension: 0.1,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.85)',
+                            titleColor: 'rgba(255,255,255,0.9)',
+                            bodyColor: 'rgba(255,255,255,0.7)',
+                            cornerRadius: 8,
+                            padding: 10,
+                            borderColor: 'rgba(255,255,255,0.08)',
+                            borderWidth: 1,
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.6)',
+                            callbacks: {
+                                label: function (context) {
+                                    return `${context.dataset.label} : ${context.raw}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 10,
+                            ticks: {
+                                stepSize: 2,
+                                color: 'rgba(255,255,255,0.5)',
+                                backdropColor: 'transparent',
+                                font: { size: 9, weight: '300' },
+                                count: 6,
+                            },
+                            pointLabels: {
+                                color: 'rgba(255,255,255,0.8)',
+                                font: { size: 12, weight: '300' },
+                                backdropColor: 'transparent',
+                            },
+                            grid: {
+                                color: 'rgba(255,255,255,0.25)',
+                                circular: true,
+                            },
+                            angleLines: {
+                                color: 'rgba(255,255,255,0.15)',
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                        }
+                    },
+                    elements: {
+                        line: { borderWidth: 1.8 },
+                    },
+                    layout: {
+                        padding: {
+                            top: 8,
+                            bottom: 8,
+                            left: 8,
+                            right: 8,
+                        }
+                    }
+                }
+            });
+
+            window.radarChart = chart;
+
+            const resizeObserver = new ResizeObserver(() => {
+                if (chart) chart.resize();
+            });
+            const container = document.querySelector('.chart-container');
+            if (container) {
+                resizeObserver.observe(container);
+            }
+
+            window.addEventListener('beforeunload', function () {
+                if (resizeObserver) resizeObserver.disconnect();
+            });
+        })();
+    </script>
+
+</body>
+
+</html>
